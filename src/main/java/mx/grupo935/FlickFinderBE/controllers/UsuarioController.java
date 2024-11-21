@@ -1,6 +1,10 @@
 package mx.grupo935.FlickFinderBE.controllers;
 
 import mx.grupo935.FlickFinderBE.models.Usuario;
+import mx.grupo935.FlickFinderBE.others.Constantes;
+import mx.grupo935.FlickFinderBE.services.UsuarioService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
@@ -12,47 +16,35 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/usuarios")
 public class UsuarioController {
-    private static final String NFS_DIRECTORY = "D:/Redes III/users";
+    private final UsuarioService usuarioService;
 
-    public UsuarioController(){
-        try{
-            Files.createDirectories(Paths.get(NFS_DIRECTORY));
-        }catch (IOException e){
-            System.out.println(e.getMessage());
-        }
+    @Autowired
+    public UsuarioController(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
     }
 
     @PostMapping("/register")
-    public String registrarUsuario(@RequestBody Usuario usuario){
-
-        List<Usuario> usuarios=leerUsuarios();
-
-        usuarios.add(usuario);
-
-        try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(NFS_DIRECTORY+"/usuarios.dat"))) {
-            oos.writeObject(usuarios);
-        }catch (IOException e){
-            return "Error al guardar el usuario"+e.getMessage();
-        }
-        return "usuario guardado exitosamente";
+    public ResponseEntity<String> register(@RequestBody Usuario usuario) {
+        usuarioService.registerUser(usuario);
+        return ResponseEntity.ok("Usuario registrado exitosamente");
     }
 
     @GetMapping("/all")
-    public List<Usuario> getAllUsuarios(){
-        return leerUsuarios();
+    public List<Usuario> obtenerTodosLosUsuarios() {
+        return usuarioService.obtenerTodos();
     }
 
-    @SuppressWarnings("unchecked")
+    /*@SuppressWarnings("unchecked")
     private List<Usuario> leerUsuarios(){
-        File arch = new File(NFS_DIRECTORY+"/usuarios.dat");
-        if (!arch.exists()){
+        File file = new File(Constantes.NFS_DIRECTORY + "/usuarios.dat");
+        if (!file.exists()) {
             return new ArrayList<>();
         }
 
-        try(ObjectInputStream ois = new ObjectInputStream(new FileInputStream(arch))){
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             return (List<Usuario>) ois.readObject();
-        }catch (IOException | ClassNotFoundException e){
+        } catch (IOException | ClassNotFoundException e) {
             return new ArrayList<>();
         }
-    }
+    }*/
 }
