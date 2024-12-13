@@ -1,55 +1,55 @@
 package mx.grupo935.FlickFinderBE.models;
 
+import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.List;
 
 public class Usuario implements Serializable {
+    @Serial
     private static final long serialVersionUID=1L;
 
-    private long id;
-    private String username;
-    private String email;
+    private Long id;
+    private String nombreUsuario;
+    private String correo;
     private String password;
-    private String firstName;
-    private String lastName;
-    private String dateOfBirth;
+    private String fechaNacimiento;
+    private List<Long> preferencias;
 
     //contructores
     public Usuario() {}
 
-    public Usuario(long id, String usuario, String email, String contraseña, String nombre, String apellido, String fechaNacimiento) {
+    public Usuario(Long id, String nombreUsuario, String correo, String password, String fechaNacimiento, List<Long> preferencias) {
         this.id = id;
-        this.username = usuario;
-        this.email = email;
-        this.password = contraseña;
-        this.firstName = nombre;
-        this.lastName = apellido;
-        this.dateOfBirth = fechaNacimiento;
+        this.nombreUsuario = nombreUsuario;
+        this.correo = correo;
+        this.password = password;
+        this.fechaNacimiento = fechaNacimiento;
+        this.preferencias = preferencias;
     }
 
-
-    //Getters y Setters
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setId(int id) {
+        this.id = (long) id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getNombreUsuario() {
+        return nombreUsuario;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setNombreUsuario(String nombreUsuario) {
+        this.nombreUsuario = nombreUsuario;
     }
 
-    public String getEmail() {
-        return email;
+    public String getCorreo() {
+        return correo;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 
     public String getPassword() {
@@ -60,27 +60,20 @@ public class Usuario implements Serializable {
         this.password = password;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getFechaNacimiento() {
+        return fechaNacimiento;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setFechaNacimiento(String fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
     }
 
-    public String getLastName() {
-        return lastName;
+    public List<Long> getPreferencias() {
+        return preferencias;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setPreferencias(List<Long> preferencias) {
+        this.preferencias = preferencias;
     }
 
-    public String getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(String dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
 }
