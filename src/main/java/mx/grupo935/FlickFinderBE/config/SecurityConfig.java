@@ -34,6 +34,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/usuarios/**").permitAll()
                         .requestMatchers("/api/movies/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/spotify/**").permitAll()
                         .anyRequest().authenticated()
                 );
         return http.build();
