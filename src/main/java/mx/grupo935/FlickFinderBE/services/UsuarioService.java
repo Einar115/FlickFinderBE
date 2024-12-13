@@ -50,7 +50,6 @@ public class UsuarioService {
 
         int userId = generateUniqueId();
         usuario.setId(userId);
-        usuario.setPassword(encryptor.encrypt(usuario.getPassword()));
 
         System.out.println("Usuario original: " + usuario.toString());
         Map<String, Object> userMap = objectMapper.convertValue(usuario, Map.class);

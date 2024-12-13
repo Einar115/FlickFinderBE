@@ -76,4 +76,15 @@ public class Usuario implements Serializable {
         this.preferencias = preferencias;
     }
 
+    @Override
+    public String toString() {
+        return "Usuario{" +
+                "id=" + id +
+                ", nombreUsuario='" + nombreUsuario + '\'' +
+                ", correo='" + correo + '\'' +
+                ", password='" + password + '\'' +
+                ", fechaNacimiento='" + fechaNacimiento + '\'' +
+                ", preferencias=" + preferencias +
+                '}';
+    }
 }
