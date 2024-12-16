@@ -2,8 +2,6 @@ package mx.grupo935.FlickFinderBE.models;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.util.List;
 
 public class Usuario implements Serializable {
     @Serial
@@ -14,18 +12,17 @@ public class Usuario implements Serializable {
     private String correo;
     private String password;
     private String fechaNacimiento;
-    private List<Long> preferencias;
+
 
     //contructores
     public Usuario() {}
 
-    public Usuario(Long id, String nombreUsuario, String correo, String password, String fechaNacimiento, List<Long> preferencias) {
+    public Usuario(Long id, String nombreUsuario, String correo, String password, String fechaNacimiento) {
         this.id = id;
         this.nombreUsuario = nombreUsuario;
         this.correo = correo;
         this.password = password;
         this.fechaNacimiento = fechaNacimiento;
-        this.preferencias = preferencias;
     }
 
     public Long getId() {
@@ -68,13 +65,7 @@ public class Usuario implements Serializable {
         this.fechaNacimiento = fechaNacimiento;
     }
 
-    public List<Long> getPreferencias() {
-        return preferencias;
-    }
 
-    public void setPreferencias(List<Long> preferencias) {
-        this.preferencias = preferencias;
-    }
 
     @Override
     public String toString() {
@@ -83,8 +74,7 @@ public class Usuario implements Serializable {
                 ", nombreUsuario='" + nombreUsuario + '\'' +
                 ", correo='" + correo + '\'' +
                 ", password='" + password + '\'' +
-                ", fechaNacimiento='" + fechaNacimiento + '\'' +
-                ", preferencias=" + preferencias +
+                ", fechaNacimiento='" + fechaNacimiento +
                 '}';
     }
 }

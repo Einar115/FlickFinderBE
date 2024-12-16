@@ -20,8 +20,15 @@ public class PeliculaService {
         this.restTemplate = restTemplate;
     }
 
-    //Buscar Peluculas
-    public String searchMovie(String query){
+    // Buscar películas por genero
+    public String searchMoviesByGenre(int genreId) {
+        String url = apiUrl + "/discover/movie?api_key=" + apiKey + "&language=es-ES&with_genres=" + genreId;
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        return response.getBody();
+    }
+
+    //Buscar Peluculas por id
+    public String searchMovieBy(String query){
         String url = apiUrl + "/search/movie?api_key="+apiKey+"&query="+query;
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         return response.getBody();

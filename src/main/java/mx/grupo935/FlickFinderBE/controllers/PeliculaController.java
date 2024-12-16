@@ -16,21 +16,30 @@ public class PeliculaController {
         this.peliculaService = peliculaService;
     }
 
+    //buscar peliculas por nombre
     @GetMapping("/search")
     public ResponseEntity<String> searchMovies(@RequestParam String query) {
-        String result = peliculaService.searchMovie(query);
+        String result = peliculaService.searchMovieBy(query);
         return ResponseEntity.ok(result);
     }
 
+    //mostrar peliculas en emision actual
     @GetMapping("/now-playing")
     public ResponseEntity<String> getNowPlayingMovies(){
         String result = peliculaService.getNowPlaying();
         return ResponseEntity.ok(result);
     }
 
+    //ver detalles de pelicula
     @GetMapping("/details/{id}")
     public ResponseEntity<String> getMovieDetails(@PathVariable long id){
         String result=peliculaService.getMoviesDetails(id);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/detailsByGender/{id}")
+    public ResponseEntity<String> getMovieDetailsByGender(@PathVariable int id){
+        String result=peliculaService.searchMoviesByGenre(id);
         return ResponseEntity.ok(result);
     }
 

@@ -2,6 +2,7 @@ package mx.grupo935.FlickFinderBE.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
+import mx.grupo935.FlickFinderBE.models.Preferencia;
 import mx.grupo935.FlickFinderBE.models.Usuario;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.encrypt.Encryptors;
@@ -51,7 +52,6 @@ public class UsuarioService {
         int userId = generateUniqueId();
         usuario.setId(userId);
 
-        System.out.println("Usuario original: " + usuario.toString());
         Map<String, Object> userMap = objectMapper.convertValue(usuario, Map.class);
         userMap.replaceAll((key, value) -> value == null ? null : encryptor.encrypt(value.toString()));
         String encryptedUserJson = objectMapper.writeValueAsString(userMap);
@@ -114,6 +114,8 @@ public class UsuarioService {
         }
         throw new IllegalArgumentException("Credenciales invalidas");
     }*/
+
+
     public Usuario validarUsuario(String nombreUsuario, String password) throws IOException {
         Usuario usuario = getUsuarioByNombreUsuario(nombreUsuario);
         if (usuario != null && encryptor.decrypt(usuario.getPassword()).equals(password)) {
@@ -166,5 +168,17 @@ public class UsuarioService {
         return maxNumber + 1; // Siguiente ID
     }
 
+    public void updateUsuario(Usuario usuario) throws IOException {
+        // Localizar el archivo del usuario por su ID
+        String filename = NFS_DIRECTORY + "/users/usuario_" + usuario.getId() + ".json";
+
+        // Convertir el usuario actualizado a un mapa y cifrar los valores
+        Map<String, Object> usuarioMap = objectMapper.convertValue(usuario, Map.class);
+        usuarioMap.replaceAll((key, value) -> value == null ? null : encryptor.encrypt(value.toString()));
+        String encryptedUsuarioJson = objectMapper.writeValueAsString(usuarioMap);
+
+        // Sobrescribir el archivo existente
+        Files.writeString(Paths.get(filename), encryptedUsuarioJson);
+    }
 
 }

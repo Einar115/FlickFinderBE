@@ -2,21 +2,20 @@ package mx.grupo935.FlickFinderBE.models;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDate;
 
 public class Preferencia implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
     private Long id;
-    private Long usuarioId;
     private String tipo;
-    private Long referenciaId;
-    private LocalDate fechaAgregada;
+    private String referenciaId;
+    private String fechaAgregada;
 
-    public Preferencia(Long id, Long usuarioId, String tipo, Long referenciaId, LocalDate fechaAgregada) {
+    public Preferencia() {}
+
+    public Preferencia(Long id, String tipo, String referenciaId, String fechaAgregada) {
         this.id = id;
-        this.usuarioId = usuarioId;
         this.tipo = tipo;
         this.referenciaId = referenciaId;
         this.fechaAgregada = fechaAgregada;
@@ -30,14 +29,6 @@ public class Preferencia implements Serializable {
         this.id = id;
     }
 
-    public Long getUsuarioId() {
-        return usuarioId;
-    }
-
-    public void setUsuarioId(Long usuarioId) {
-        this.usuarioId = usuarioId;
-    }
-
     public String getTipo() {
         return tipo;
     }
@@ -46,19 +37,29 @@ public class Preferencia implements Serializable {
         this.tipo = tipo;
     }
 
-    public Long getReferenciaId() {
+    public String getReferenciaId() {
         return referenciaId;
     }
 
-    public void setReferenciaId(Long referenciaId) {
+    public void setReferenciaId(String referenciaId) {
         this.referenciaId = referenciaId;
     }
 
-    public LocalDate getFechaAgregada() {
+    public String getFechaAgregada() {
         return fechaAgregada;
     }
 
-    public void setFechaAgregada(LocalDate fechaAgregada) {
+    public void setFechaAgregada(String fechaAgregada) {
         this.fechaAgregada = fechaAgregada;
+    }
+
+    @Override
+    public String toString() {
+        return "Preferencia{" +
+                "id=" + id +
+                ", tipo='" + tipo + '\'' +
+                ", referenciaId=" + referenciaId +
+                ", fechaAgregada=" + fechaAgregada +
+                '}';
     }
 }

@@ -32,23 +32,31 @@ public class SpotifyService {
         this.objectMapper = objectMapper;
     }
 
-    public String searchTrack(String query) {
+    // Buscar albumes por genero
+    public String searchAlbumsByGenre(String genre) {
+        return search("genre:" + genre, "album");
+    }
+
+    // Buscar albumes por artista
+    public String searchAlbumsByArtist(String artist) {
+        return search("artist:" + artist, "album");
+    }
+
+    public String search(String query, String type) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + getToken());
-
         String url = UriComponentsBuilder.fromHttpUrl(spotifyApiUrl + "/search")
                 .queryParam("q", query)
-                .queryParam("type", "track")
+                .queryParam("type", type) // "track" o "album"
                 .queryParam("limit", 10)
                 .toUriString();
-
         HttpEntity<Void> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
 
         return response.getBody();
     }
 
-    public String getTrackDetails(String trackId) {
+    public String getTrackDetailsById(long trackId) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + getToken());
 
@@ -58,6 +66,18 @@ public class SpotifyService {
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
         return response.getBody();
     }
+
+    public String getAlbumDetails(String albumId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + getToken());
+
+        String url = spotifyApiUrl + "/albums/" + albumId;
+
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+        return response.getBody();
+    }
+
 
     public String getNewReleases() {
         HttpHeaders headers = new HttpHeaders();
