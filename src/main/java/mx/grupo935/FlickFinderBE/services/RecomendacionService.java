@@ -123,7 +123,6 @@ public class RecomendacionService {
             try {
                 // Obtener detalles del álbum para extraer el artista principal
                 String albumDetailsJson = spotifyService.getAlbumDetails(albumId);
-                System.out.println("Detalles del álbum: " + albumDetailsJson);
 
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode albumNode = objectMapper.readTree(albumDetailsJson);
