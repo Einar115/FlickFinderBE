@@ -46,7 +46,6 @@ public class SpotifyController {
     public ResponseEntity<?> getNewAlbums() {
         try {
             String newAlbumsJson = spotifyService.getNewReleases();
-            System.out.println("albumes:"+newAlbumsJson);
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode newAlbumsNode = objectMapper.readTree(newAlbumsJson);
 
