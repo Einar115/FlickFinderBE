@@ -52,6 +52,7 @@ public class UsuarioService {
         int userId = generateUniqueId();
         usuario.setId(userId);
 
+        System.out.println("Usuario original: " + usuario.toString());
         Map<String, Object> userMap = objectMapper.convertValue(usuario, Map.class);
         userMap.replaceAll((key, value) -> value == null ? null : encryptor.encrypt(value.toString()));
         String encryptedUserJson = objectMapper.writeValueAsString(userMap);

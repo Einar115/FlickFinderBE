@@ -132,6 +132,7 @@ public class PreferenciaService{
         String filename = NFS_DIRECTORY + "/preferencias/usuario" + usuario.getId() + "/preferencia_" + preferenciaId + ".json";
         Files.writeString(Paths.get(filename), encryptedPreferenciaJson);
 
+        System.out.println(preferencia.toString());
         return preferencia;
     }
 
@@ -140,11 +141,12 @@ public class PreferenciaService{
         File directory = new File(userDir);
 
         if (!directory.exists() || !directory.isDirectory()) {
-
+            System.out.println("El directorio no existe para el usuario: " + usuario.getId());
             return false; // No hay preferencias
         }
         File[] preferenciaFiles = directory.listFiles((dir, name) -> name.startsWith("preferencia_") && name.endsWith(".json"));
         if (preferenciaFiles == null || preferenciaFiles.length == 0) {
+            System.out.println("No se encontraron preferencias para el usuario: " + usuario.getId());
             return false; // Sin archivos de preferencias
         }
         for (File file : preferenciaFiles) {

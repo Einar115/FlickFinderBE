@@ -45,7 +45,6 @@ public class RecomendacionController {
 
         // Llamar al servicio para obtener recomendaciones
         String recomendaciones = recomendacionService.recomendarAlbumes(usuario, limite);
-
         // Retornar el resultado como un String
         return ResponseEntity.ok(recomendaciones);
     }

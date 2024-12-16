@@ -78,7 +78,6 @@ public class SpotifyService {
         return response.getBody();
     }
 
-
     public String getNewReleases() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + getToken());

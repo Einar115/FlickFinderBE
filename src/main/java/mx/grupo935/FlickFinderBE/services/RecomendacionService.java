@@ -108,14 +108,14 @@ public class RecomendacionService {
     public String recomendarAlbumes(Usuario usuario, int limite) throws IOException {
         // Obtener las preferencias del usuario
         List<Preferencia> preferencias = preferenciaService.getAllPreferencias(usuario);
-
+        System.out.println("Preferencias del usuario: " + preferencias);
 
         // Extraer los referenciaId (IDs de álbumes)
         Set<String> referenciaIds = preferencias.stream()
                 .filter(pref -> "album".equalsIgnoreCase(pref.getTipo()))
                 .map(Preferencia::getReferenciaId)
                 .collect(Collectors.toSet());
-
+        System.out.println("Referencia IDs (álbumes): " + referenciaIds);
 
         StringBuilder recomendacionesAlbumes = new StringBuilder();
 
@@ -123,16 +123,16 @@ public class RecomendacionService {
             try {
                 // Obtener detalles del álbum para extraer el artista principal
                 String albumDetailsJson = spotifyService.getAlbumDetails(albumId);
-
+                System.out.println("Detalles del álbum: " + albumDetailsJson);
 
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode albumNode = objectMapper.readTree(albumDetailsJson);
                 String artistId = albumNode.path("artists").get(0).get("id").asText();
-
+                System.out.println("Artista principal del álbum: " + artistId);
 
                 // Buscar álbumes relacionados por artista
                 String resultadosAlbumesJson = spotifyService.searchAlbumsByArtist(artistId);
-
+                System.out.println("Álbumes relacionados del artista: " + resultadosAlbumesJson);
 
                 // Añadir resultados al string acumulativo
                 recomendacionesAlbumes.append(resultadosAlbumesJson).append("\n");
