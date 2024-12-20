@@ -72,39 +72,6 @@ public class RecomendacionService {
         return recomendacionesPeliculas;
     }
 
-    /*public List<String> recomendarAlbumes(Usuario usuario) throws IOException {
-        // Obtener preferencias del usuario
-        List<Preferencia> preferencias = preferenciaService.getAllPreferencias(usuario);
-
-        // Filtrar preferencias por tipo "album" para obtener géneros y artistas
-        Set<String> generosAlbumes = preferencias.stream()
-                .filter(pref -> "album".equalsIgnoreCase(pref.getTipo()))
-                .map(pref -> String.valueOf(pref.getReferenciaId())) // Se asume que ReferenciaId contiene el género
-                .collect(Collectors.toSet());
-
-        // Generar recomendaciones de álbumes por género
-        List<String> recomendacionesPorGenero = generosAlbumes.stream()
-                .map(spotifyService::searchAlbumsByGenre)
-                .collect(Collectors.toList());
-
-        // Si también deseas buscar por artista, puedes incluir esta lógica:
-        Set<String> artistasFavoritos = preferencias.stream()
-                .filter(pref -> "album".equalsIgnoreCase(pref.getTipo()))
-                .map(pref -> String.valueOf(pref.getReferenciaId())) // Asume que hay una separación para géneros y artistas
-                .collect(Collectors.toSet());
-
-        List<String> recomendacionesPorArtista = artistasFavoritos.stream()
-                .map(spotifyService::searchAlbumsByArtist)
-                .collect(Collectors.toList());
-
-        // Combinar resultados
-        List<String> recomendacionesAlbumes = new ArrayList<>();
-        recomendacionesAlbumes.addAll(recomendacionesPorGenero);
-        recomendacionesAlbumes.addAll(recomendacionesPorArtista);
-
-        return recomendacionesAlbumes;
-    }*/
-
     public String recomendarAlbumes(Usuario usuario, int limite) throws IOException {
         // Obtener las preferencias del usuario
         List<Preferencia> preferencias = preferenciaService.getAllPreferencias(usuario);

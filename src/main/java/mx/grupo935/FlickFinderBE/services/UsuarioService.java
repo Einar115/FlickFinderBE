@@ -2,7 +2,6 @@ package mx.grupo935.FlickFinderBE.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
-import mx.grupo935.FlickFinderBE.models.Preferencia;
 import mx.grupo935.FlickFinderBE.models.Usuario;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.encrypt.Encryptors;
@@ -34,6 +33,7 @@ public class UsuarioService {
         this.objectMapper = objectMapper;
     }
 
+    //PostConstruct una vez que crea el servicio tambien se creara el encriptador y el directorio del NFS donde se guardaran los usuarios
     @PostConstruct
     public void init() {
         this.encryptor = Encryptors.text(SECRET_KEY,SALT);
@@ -44,6 +44,7 @@ public class UsuarioService {
         }
     }
 
+    //guardar el usuario con sus datos encriptados en la carpeta asignada
     public void saveUser(Usuario usuario) throws IOException {
         if (isDuplicate(usuario)) {
             throw new IllegalArgumentException("Ya existe una cuenta con el mismo nombre de usuario o correo electrónico.");
@@ -63,6 +64,7 @@ public class UsuarioService {
         Files.writeString(Paths.get(filename), encryptedUserJson);
     }
 
+    //verificar si algun usuario no cuenta ya con ese nombre de usuario o correo electronico
     private boolean isDuplicate(Usuario usuario) throws IOException {
         File storageDir = new File(NFS_DIRECTORY + "/users/");
         File[] usuarioFiles = storageDir.listFiles((dir, name) -> name.endsWith(".json"));
@@ -87,6 +89,7 @@ public class UsuarioService {
         return false; // No hay duplicados
     }
 
+    //obtener usuario por su Correo electronico
     public Usuario getUsuarioByEmail(String email) throws IOException {
         List<Usuario> usuarios = getAllUsers();
         return usuarios.stream()
@@ -95,7 +98,7 @@ public class UsuarioService {
                 .orElse(null);
     }
 
-
+    //obtener Usuario por su nombre de usuario
     public Usuario getUsuarioByNombreUsuario(String nombreUsuario) throws IOException {
         List<Usuario> usuarios = getAllUsers();
         for (Usuario usuario : usuarios) {
@@ -106,26 +109,8 @@ public class UsuarioService {
         return null; // Retorna null si no encuentra coincidencias
     }
 
-    /*public Usuario validarUsuario(String nombreUsuario, String password) throws IOException{
-        List<Usuario> usuarios = getAllUsers();
 
-        for (Usuario usuario: usuarios){
-            if (usuario.getNombreUsuario().equals(nombreUsuario) && usuario.getPassword().equals(password))
-                return usuario;
-        }
-        throw new IllegalArgumentException("Credenciales invalidas");
-    }*/
-
-
-    public Usuario validarUsuario(String nombreUsuario, String password) throws IOException {
-        Usuario usuario = getUsuarioByNombreUsuario(nombreUsuario);
-        if (usuario != null && encryptor.decrypt(usuario.getPassword()).equals(password)) {
-            return usuario; // Credenciales válidas
-        }
-        throw new IllegalArgumentException("Credenciales inválidas");
-    }
-
-
+    //obtener todos los usuarios que se encuentran en el directoio users
     public List<Usuario> getAllUsers() throws IOException {
         List<Usuario> usuarios = new ArrayList<>();
         File storageDir = new File(NFS_DIRECTORY + "/users/");
@@ -142,11 +127,7 @@ public class UsuarioService {
         return usuarios;
     }
 
-    public void deleteUsuario(String nombreUsuario) throws IOException{
-        String filename = NFS_DIRECTORY+"/users/"+nombreUsuario+".json";
-        Files.deleteIfExists(Paths.get(filename));
-    }
-
+    //generar id de usuario para ello compara cuantos archivos de usuario existen
     private int generateUniqueId() {
         File storageDir = new File(NFS_DIRECTORY + "/users/");
         File[] usuarioFiles = storageDir.listFiles((dir, name) -> name.startsWith("usuario_") && name.endsWith(".json"));
@@ -167,19 +148,6 @@ public class UsuarioService {
         }
 
         return maxNumber + 1; // Siguiente ID
-    }
-
-    public void updateUsuario(Usuario usuario) throws IOException {
-        // Localizar el archivo del usuario por su ID
-        String filename = NFS_DIRECTORY + "/users/usuario_" + usuario.getId() + ".json";
-
-        // Convertir el usuario actualizado a un mapa y cifrar los valores
-        Map<String, Object> usuarioMap = objectMapper.convertValue(usuario, Map.class);
-        usuarioMap.replaceAll((key, value) -> value == null ? null : encryptor.encrypt(value.toString()));
-        String encryptedUsuarioJson = objectMapper.writeValueAsString(usuarioMap);
-
-        // Sobrescribir el archivo existente
-        Files.writeString(Paths.get(filename), encryptedUsuarioJson);
     }
 
 }

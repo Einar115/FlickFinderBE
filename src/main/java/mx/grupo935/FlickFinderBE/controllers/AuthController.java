@@ -24,7 +24,7 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
-
+    //ingrear con usuario y contraseña
     @PostMapping("/login")
     public Map<String, String> login(@RequestBody Map<String, String> credentials) throws IOException {
         String username = credentials.get("username");

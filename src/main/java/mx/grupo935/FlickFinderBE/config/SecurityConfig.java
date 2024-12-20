@@ -24,6 +24,7 @@ public class SecurityConfig {
     @Value("${server.url.frontend}")
     private String URL_FRONTEND;
 
+    // Filtros de seguridad
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -43,6 +44,7 @@ public class SecurityConfig {
         return http.build();
     }
 
+    //configuracion del cors
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
@@ -57,11 +59,13 @@ public class SecurityConfig {
         return new CorsFilter(source);
     }
 
+    //encriptador de contraseña
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
+    //Administrador de autentificacion
     @Bean
     AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception{
         return configuration.getAuthenticationManager();

@@ -26,6 +26,7 @@ public class UsuarioController {
         this.usuarioService = usuarioService;
     }
 
+    //Registrar nuevo usuario
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> registerUser(@RequestBody Usuario usuario) {
         try{
@@ -46,6 +47,7 @@ public class UsuarioController {
         }
     }
 
+    //obtener informacion de algun usuario
     @GetMapping("/{nombreUsuario}")
     public ResponseEntity<Usuario> getUsuario(@PathVariable String nombreUsuario){
         try {
@@ -56,6 +58,7 @@ public class UsuarioController {
         }
     }
 
+    //obtener todos los usuarios registrados
     @GetMapping("/all")
     public List<Usuario> obtenerTodosLosUsuarios() {
         try {

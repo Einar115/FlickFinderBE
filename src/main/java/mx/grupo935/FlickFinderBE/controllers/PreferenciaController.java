@@ -56,49 +56,42 @@ public class PreferenciaController {
     //obtener informacion de la pelicula con la API TMDB tomando en cuenta los archivos de preferencia del usuario
     @GetMapping("/favoritos/peliculas")
     public ResponseEntity<List<Map<String, Object>>> obtenerDetallesPeliculas(@RequestHeader("Authorization") String authHeader) throws IOException {
-        //Extraer el token y el nombre de usuario
         String token = authHeader.replace("Bearer ", "");
         String username = jwtUtil.extractUsername(token);
 
-        // Obtener el usuario asociado al token
         Usuario usuario = usuarioService.getUsuarioByNombreUsuario(username);
         if (usuario == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Usuario no encontrado
         }
-
         // Obtener las preferencias del usuario
         List<Preferencia> preferencias = preferenciaService.getAllPreferencias(usuario);
 
-        // Recuperar los detalles para cada preferencia de tipo "pelicula"
+        //Ubtener los detalles para las preferencias de tipo pelicula
         List<Map<String, Object>> detalles = new ArrayList<>();
         for (Preferencia preferencia : preferencias) {
             if ("pelicula".equals(preferencia.getTipo())) {
                 String detallesPeliculaJson = peliculaService.getMoviesDetails(Long.parseLong(preferencia.getReferenciaId()));
-                // Convertir el JSON recibido a un Map para consistencia
                 Map<String, Object> detalle = new ObjectMapper().readValue(detallesPeliculaJson, Map.class);
                 detalles.add(detalle);
             }
         }
-        return ResponseEntity.ok(detalles); // Devolver los detalles en formato JSON
+        return ResponseEntity.ok(detalles);
     }
 
     //obtiene informacion de albumes musicales con la API de Spotify con las preferencias del usuario
     @GetMapping("/favoritos/albumes")
     public ResponseEntity<List<Map<String, Object>>> obtenerDetallesAlbumes(@RequestHeader("Authorization") String authHeader) throws IOException {
-        // Extraer el token y el nombre de usuario
         String token = authHeader.replace("Bearer ", "");
         String username = jwtUtil.extractUsername(token);
 
-        // Obtener el usuario asociado al token
         Usuario usuario = usuarioService.getUsuarioByNombreUsuario(username);
         if (usuario == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Usuario no encontrado
         }
 
-        // Obtener las preferencias del usuario
         List<Preferencia> preferencias = preferenciaService.getAllPreferencias(usuario);
 
-        // Recuperar los detalles para cada preferencia de tipo "album"
+        //Obtener los detalles de para las preferencias de tipo album
         List<Map<String, Object>> detalles = new ArrayList<>();
         for (Preferencia preferencia : preferencias) {
             if ("album".equals(preferencia.getTipo())) {
@@ -132,12 +125,9 @@ public class PreferenciaController {
         }
     }
 
-
-
     //guarda la preferencia del usario
     @PostMapping("/guardar")
     public Preferencia guardarPreferencia(@RequestHeader("Authorization") String authHeader, @RequestBody Preferencia preferencia) throws IOException {
-        //Extraer el token y el nombre de usuario
         String token = authHeader.replace("Bearer ", "");
         String username = jwtUtil.extractUsername(token);
 

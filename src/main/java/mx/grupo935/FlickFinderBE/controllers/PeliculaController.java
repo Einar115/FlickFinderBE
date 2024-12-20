@@ -37,6 +37,7 @@ public class PeliculaController {
         return ResponseEntity.ok(result);
     }
 
+    //obtener detalles de las peliculas con su id de genero
     @GetMapping("/detailsByGender/{id}")
     public ResponseEntity<String> getMovieDetailsByGender(@PathVariable int id){
         String result=peliculaService.searchMoviesByGenre(id);

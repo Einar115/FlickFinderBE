@@ -29,6 +29,7 @@ public class Usuario implements Serializable {
         return id;
     }
 
+    //setters y getters
     public void setId(int id) {
         this.id = (long) id;
     }
@@ -66,7 +67,7 @@ public class Usuario implements Serializable {
     }
 
 
-
+    //toString
     @Override
     public String toString() {
         return "Usuario{" +

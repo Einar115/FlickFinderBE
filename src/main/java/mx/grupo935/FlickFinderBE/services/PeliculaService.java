@@ -41,6 +41,7 @@ public class PeliculaService {
         return response.getBody();
     }
 
+    //Obtener detalles de pelicula buscando la pelicula con su ID
     public String getMoviesDetails(long movieId){
         String url = apiUrl + "/movie/"+movieId+"?api_key="+apiKey+"&language=es-ES";
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);

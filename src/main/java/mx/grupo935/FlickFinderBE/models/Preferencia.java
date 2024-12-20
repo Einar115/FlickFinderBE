@@ -12,6 +12,7 @@ public class Preferencia implements Serializable {
     private String referenciaId;
     private String fechaAgregada;
 
+    //constructores
     public Preferencia() {}
 
     public Preferencia(Long id, String tipo, String referenciaId, String fechaAgregada) {
@@ -21,6 +22,7 @@ public class Preferencia implements Serializable {
         this.fechaAgregada = fechaAgregada;
     }
 
+    //getters y setters
     public Long getId() {
         return id;
     }
@@ -53,6 +55,7 @@ public class Preferencia implements Serializable {
         this.fechaAgregada = fechaAgregada;
     }
 
+    //toString
     @Override
     public String toString() {
         return "Preferencia{" +

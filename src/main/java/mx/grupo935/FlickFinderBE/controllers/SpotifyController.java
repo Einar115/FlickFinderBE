@@ -27,6 +27,7 @@ public class SpotifyController {
         this.spotifyService=spotifyService;
     }
 
+    //Buscar albumes
     @GetMapping("/search")
     public ResponseEntity<String> search(@RequestParam String query, @RequestParam String type) {
         if (!type.equals("track") && !type.equals("album")) {
@@ -36,12 +37,14 @@ public class SpotifyController {
         return ResponseEntity.ok(result);
     }
 
+    //Obtener detalles de algun tema musical
     @GetMapping("/tracks/{id}")
     public ResponseEntity<String> getTrackDetails(@PathVariable long id){
         String result = spotifyService.getTrackDetailsById(id);
         return ResponseEntity.ok(result);
     }
 
+    //Obtener abumes recien estrenados
     @GetMapping("/new-albums")
     public ResponseEntity<?> getNewAlbums() {
         try {
@@ -68,27 +71,4 @@ public class SpotifyController {
         }
     }
 
-    @GetMapping("/new-releases")
-    public ResponseEntity<List<Map<String,String>>> getNewReleases() {
-        String newReleases = spotifyService.getNewReleases();
-        try{
-            JsonNode jsonNode=new ObjectMapper().readTree(newReleases);
-            List<Map<String,String>> tracks = new ArrayList<>();
-
-            for (JsonNode album: jsonNode.get("albums").get("items")){
-                Map<String, String> trackInfo=new HashMap<>();
-                trackInfo.put("name", album.get("name").asText());
-                trackInfo.put("artist", album.get("artists").get(0).get("name").asText());
-                if (album.has("images") && album.get("images").isArray() && album.get("images").size() > 0) {
-                    trackInfo.put("image", album.get("images").get(0).path("url").asText("default-image.jpg"));
-                } else {
-                    trackInfo.put("image", "default-image.jpg");
-                }
-                tracks.add(trackInfo);
-            }
-            return ResponseEntity.ok(tracks);
-        } catch (Exception e){
-            throw new RuntimeException("Error al obtener los temas: " + e.getMessage(), e);
-        }
-    }
 }

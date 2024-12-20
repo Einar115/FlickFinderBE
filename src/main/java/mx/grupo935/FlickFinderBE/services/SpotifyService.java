@@ -42,6 +42,7 @@ public class SpotifyService {
         return search("artist:" + artist, "album");
     }
 
+    // Busqueda por album o por tema musical individual
     public String search(String query, String type) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + getToken());
@@ -56,6 +57,7 @@ public class SpotifyService {
         return response.getBody();
     }
 
+    //Obtener detalles de alguna pista musical con su id
     public String getTrackDetailsById(long trackId) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + getToken());
@@ -67,6 +69,7 @@ public class SpotifyService {
         return response.getBody();
     }
 
+    //obtener detalles de albun con su id
     public String getAlbumDetails(String albumId) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + getToken());
@@ -78,6 +81,7 @@ public class SpotifyService {
         return response.getBody();
     }
 
+    //obtener nuevos lanzamientos
     public String getNewReleases() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + getToken());
@@ -90,6 +94,7 @@ public class SpotifyService {
         return response.getBody();
     }
 
+    //Obtener token de de la API de Spotifu
     public String getToken() {
         try {
             String credentials = CLIENT_ID + ":" + CLIENT_SECRET;

@@ -16,10 +16,12 @@ public class JwtUtil {
     @Value("${jwt.key}")
     private String SECRET_KEY;
 
+    //obtener clave
     private SecretKey obtenerKey(){
         return Keys.hmacShaKeyFor(this.SECRET_KEY.getBytes());
     }
 
+    //generar token a partir del nombre de usuario
     public String generateToken(String username, Map<String, Object> claims) {
         return Jwts.builder()
                 .setClaims(claims)

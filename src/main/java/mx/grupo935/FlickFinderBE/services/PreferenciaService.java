@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,11 +31,11 @@ public class PreferenciaService{
     private final ObjectMapper objectMapper;
     private TextEncryptor encryptor;
 
-
     public PreferenciaService(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
+    //PostConstruct una vez que crea el servicio tambien se creara el encriptador y el directorio del NFS donde se guardaran las preferencias
     @PostConstruct
     public void init() {
         this.encryptor = Encryptors.text(SECRET_KEY, SALT);
@@ -47,30 +46,45 @@ public class PreferenciaService{
         }
     }
 
-    public Preferencia getPreferenciaById(long id, Usuario usuario) throws IOException{
-        String filename = NFS_DIRECTORY+"/preferencias/usuario"+usuario.getId()+"/preferencia_"+id+"-json";
-        if (!Files.exists(Paths.get(filename))){
-            return null;
+    //Guarda la preferencia en el directorio de preferencias y el del usuario que cuenta con esas preferencias
+    public Preferencia savePreferencia(Preferencia preferencia, Usuario usuario) throws IOException {
+        Files.createDirectories(Paths.get(NFS_DIRECTORY + "/preferencias/usuario" + usuario.getId()));
+        List<Preferencia> preferenciasExistentes = getAllPreferencias(usuario);
+
+        boolean existe = preferenciasExistentes.stream().anyMatch(p ->
+                p.getReferenciaId() != null &&
+                        p.getReferenciaId().equals(preferencia.getReferenciaId()) &&
+                        p.getTipo().equals(preferencia.getTipo())
+        );
+        if (existe) {
+            throw new IllegalArgumentException("Ya existe una preferencia con el mismo 'referenciaId' y 'tipo' para este usuario.");
         }
+        // Generar un ID único para la nueva preferencia
+        long preferenciaId = generateUniqueId(usuario);
+        preferencia.setId(preferenciaId);
 
-        String encryptedJson = Files.readString(Paths.get(filename));
-        Map<String, Object> decryptedMap = objectMapper.readValue(encryptedJson, Map.class);
-        decryptedMap.replaceAll((key, value) -> value == null ? null: encryptor.decrypt(value.toString()));
+        // Convertir la preferencia a un mapa y cifrar los valores
+        Map<String, Object> preferenciaMap = objectMapper.convertValue(preferencia, Map.class);
+        preferenciaMap.replaceAll((key, value) -> value == null ? null : encryptor.encrypt(value.toString()));
+        String encryptedPreferenciaJson = objectMapper.writeValueAsString(preferenciaMap);
 
-        return objectMapper.convertValue(decryptedMap, Preferencia.class);
+        // Guardar el archivo en el sistema
+        String filename = NFS_DIRECTORY + "/preferencias/usuario" + usuario.getId() + "/preferencia_" + preferenciaId + ".json";
+        Files.writeString(Paths.get(filename), encryptedPreferenciaJson);
 
+        System.out.println(preferencia.toString());
+        return preferencia;
     }
 
+    //Obtener todas las preferencias del directorio
     public List<Preferencia> getAllPreferencias(Usuario usuario) throws IOException {
         // Directorio de preferencias del usuario
         String userDir = NFS_DIRECTORY + "/preferencias/usuario" + usuario.getId() + "/";
         File directory = new File(userDir);
-
         // Verificar si el directorio existe
         if (!directory.exists() || !directory.isDirectory()) {
             return new ArrayList<>(); // Si no hay preferencias, devolver lista vacía
         }
-
         // Listar los archivos de preferencias en el directorio
         File[] preferenciaFiles = directory.listFiles((dir, name) -> name.startsWith("preferencia_") && name.endsWith(".json"));
         if (preferenciaFiles == null || preferenciaFiles.length == 0) {
@@ -100,42 +114,7 @@ public class PreferenciaService{
         return preferencias;
     }
 
-    public Preferencia savePreferencia(Preferencia preferencia, Usuario usuario) throws IOException {
-        // Crear el directorio si no existe
-        Files.createDirectories(Paths.get(NFS_DIRECTORY + "/preferencias/usuario" + usuario.getId()));
-
-        // Obtener todas las preferencias del usuario
-        List<Preferencia> preferenciasExistentes = getAllPreferencias(usuario);
-
-        // Validar si ya existe una preferencia con el mismo referenciaId y tipo
-        boolean existe = preferenciasExistentes.stream().anyMatch(p ->
-                p.getReferenciaId() != null &&
-                        p.getReferenciaId().equals(preferencia.getReferenciaId()) &&
-                        p.getTipo().equals(preferencia.getTipo())
-        );
-
-
-        if (existe) {
-            throw new IllegalArgumentException("Ya existe una preferencia con el mismo 'referenciaId' y 'tipo' para este usuario.");
-        }
-
-        // Generar un ID único para la nueva preferencia
-        long preferenciaId = generateUniqueId(usuario);
-        preferencia.setId(preferenciaId);
-
-        // Convertir la preferencia a un mapa y cifrar los valores
-        Map<String, Object> preferenciaMap = objectMapper.convertValue(preferencia, Map.class);
-        preferenciaMap.replaceAll((key, value) -> value == null ? null : encryptor.encrypt(value.toString()));
-        String encryptedPreferenciaJson = objectMapper.writeValueAsString(preferenciaMap);
-
-        // Guardar el archivo en el sistema
-        String filename = NFS_DIRECTORY + "/preferencias/usuario" + usuario.getId() + "/preferencia_" + preferenciaId + ".json";
-        Files.writeString(Paths.get(filename), encryptedPreferenciaJson);
-
-        System.out.println(preferencia.toString());
-        return preferencia;
-    }
-
+    //Eliminar las preferencias
     public boolean deletePreferencia(String referenciaId, Usuario usuario) throws IOException {
         String userDir = NFS_DIRECTORY + "/preferencias/usuario" + usuario.getId() + "/";
         File directory = new File(userDir);
@@ -171,7 +150,7 @@ public class PreferenciaService{
         return false;
     }
 
-
+    //genera un id dependiendo de los documentos de las preferencias
     private long generateUniqueId(Usuario usuario) {
         File storageDir = new File(NFS_DIRECTORY + "/preferencias/usuario"+usuario.getId()+"/");
         File[] preferenciaFiles = storageDir.listFiles((dir, name) -> name.startsWith("preferencia_") && name.endsWith(".json"));
